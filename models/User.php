@@ -15,7 +15,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 
 	public static function tablename()
 	{
-		return 'users';
+		return '{{%user}}';
 	}
 	
 	public function behaviors()
@@ -23,8 +23,8 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 		return [
 			[
 				'class' => TimestampBehavior::className(),
-				'createdAtAttribute' => 'created',
-				'updatedAtAttribute' => 'modified',
+				'createdAtAttribute' => 'created_at',
+				'updatedAtAttribute' => 'update_at',
 				'value' => new Expression('NOW()'),
 			],
 		];
@@ -62,5 +62,28 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     
     public function findByUserName($username)
     {
+    }
+    
+    public function generatePasswordResetToken()
+    {
+    	$this->reset_token = Yii::$app->security->generateRandomString(). '_' . time();
+    }
+    
+    public function removePasswordResetToken()
+    {
+    	$this->reset_token = null;
+    }
+    
+    public static function isPasswordResetTokenValid($token)
+    {
+    	if (empty($token)) {
+    		return false;
+    	}
+    	 
+    	$expire = Yii::$app->params['user.passwordResetTokenExpire'];
+    	$parts = explode('_', $token);
+    	$timeStamp = (int) end($parts);
+    	 
+    	return $timeStamp - $expire >= time();
     }
 }

@@ -6,9 +6,9 @@ use yii\base\Model;
 
 class SignupForm extends Model
 {
-	public $email;
 	public $firstName;
 	public $lastName;
+	public $email;
 	public $password;
 	public $passwordRepeat;
 	
@@ -40,9 +40,15 @@ class SignupForm extends Model
 		if ($this->validate())
 		{
 			$this->_user = new User();
-			$this->_user->username = $this->firstName + ' ' + $this->lastName;
+			$this->_user->username = $this->firstName . ' ' . $this->lastName;
 			$this->_user->email = $this->email;
+			$this->_user->setPassword($this->password);
+			$this->_user->generateAuthenticationKey();
 			
+			if ($this->_user->save(false))
+			{
+				return $this->_user;
+			}
 		}
 		
 		return null;

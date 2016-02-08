@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SignupForm;
 
 class SiteController extends Controller
 {
@@ -49,6 +50,11 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+    	if (Yii::$app->user->isGuest)
+    	{
+    		
+    	}
+    	
     	Yii::$app->layout = 'cover';
         return $this->render('index');
     }
@@ -75,23 +81,19 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
-
-    public function actionContact()
+    
+    public function actionSignup()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        } else {
-            return $this->render('contact', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionAbout()
-    {
-        return $this->render('about');
+    	$model = new SignupForm();
+    	if ($model->load(Yii::$app->request->post()))
+    	{
+    		if ($user = $model->signup())
+    		{
+    			if (Yii::$app->getUser()->login($user))
+    			{
+    				return $this->goHome();
+    			}
+    		}
+    	}
     }
 }

@@ -26,8 +26,6 @@ class m160208_052417_create_profile_table extends Migration
 
     public function down()
     {
-        echo "m160208_052417_create_profile_table cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('{{%profile}}');
     }
 }
