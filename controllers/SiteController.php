@@ -52,7 +52,7 @@ class SiteController extends Controller
     {
     	if (Yii::$app->user->isGuest)
     	{
-    		
+    		return $this->redirect(['signup']);
     	}
     	
     	Yii::$app->layout = 'cover';
@@ -61,7 +61,7 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
+        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
@@ -95,5 +95,8 @@ class SiteController extends Controller
     			}
     		}
     	}
+    	
+    	Yii::$app->layout = 'cover';
+    	return $this->render('index', ['model' => $model,]);
     }
 }
